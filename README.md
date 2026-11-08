@@ -91,6 +91,9 @@ ffprobe -v error -rtsp_transport tcp \
   rtsp://127.0.0.1:8554/petlibro_feeder
 ```
 
+`quality=hd` is an HD-readiness preference; `quality=sd` skips that HD wait.
+Neither sends an OEM resolution setter. The feeder's application configuration
+and congestion state select the source; see the [native transport contract](docs/petlibro-transport.md).
 An HD camera may initially send a 640x360 SPS before switching to 1920x1080.
 The PLAF203 adapter automatically gives this transition a bounded 15-second
 preference window before advertising the initial track. This limits startup
@@ -126,10 +129,21 @@ Fork releases use tags such as `v1.9.14-petlibro.1`. Consumers should pin a
 full commit or immutable tag and verify the published checksums rather
 than tracking the `petlibro` branch.
 
-## Troubleshooting and development
+## Support, Issues & Troubleshooting
 
-- [Petlibro debugging guide](docs/debugging.md) — health counters,
-  trace controls, plaintext captures, replay, and common failure modes
+- [Report a reproducible bug](https://github.com/tannerln7/go2rtc/issues/new?template=bug_report.yml)
+  with the structured issue form
+- [Debugging and troubleshooting discussion](https://github.com/tannerln7/go2rtc/discussions/2)
+  for questions, intermittent problems, environment comparisons, and test results
+- [Petlibro debugging guide](docs/debugging.md) for health counters, trace
+  controls, bounded captures, replay, and common failure modes
+
+Use Discussions while the root cause is uncertain. Open an Issue when a defect
+is reproducible or an improvement is clearly scoped, and link any supporting
+discussion. Sanitize logs and configuration before posting.
+
+## Development
+
 - [Development guide](docs/development.md) — package architecture, protocol
   invariants, tests, build checks, and live-test workflow
 - [Contributing](CONTRIBUTING.md) — useful issue evidence, privacy rules, and
