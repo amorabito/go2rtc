@@ -10,7 +10,6 @@ go2rtc architecture and APIs, use the existing module documentation under
 - Go 1.24 or newer, as declared by [`go.mod`](../go.mod)
 - Git
 - FFmpeg/ffprobe for optional RTSP verification
-- Docker only when validating the local container image
 
 Run the Go commands below from the repository root.
 
@@ -149,12 +148,7 @@ owned by `AUDIOSTART` rather than the LOGIN trailer.
 Firmware strings distinguish `AUDIOSTART` registration from `AUDIOSTOP`
 unregistration and expose separate `SPEAKERSTART` / `SPEAKERSTOP` handling for
 client-to-camera audio. The current implementation provides inbound AAC only.
-The add-on's optional `camera_audio` setting renders the Petlibro source with
-`audio=true` and adds `ffmpeg:<stream>#audio=opus` as a second source on the
-same logical go2rtc stream. FFmpeg consumes only the native AAC track and is
-started on demand; H.264 remains direct and no second Petlibro session is
-created. This topology has been hardware-tested with native AAC RTSP, Opus
-RTSP, and Chromium WebRTC decoding.
+
 Session close sends the established best-effort `IPCAM_STOP` and closes UDP;
 whether an explicit `AUDIOSTOP` first improves camera-side cleanup has not been
 verified against an OEM close capture or a measurable hardware failure. Do not
@@ -221,9 +215,8 @@ For HD tests, record both the selected startup SPS and any later codec-change
 line. Repeated identical SPS units are intentionally TRACE-only.
 The adapter waits up to 15 seconds when an HD request begins below 1920x1080;
 the camera can transition later, so the first advertised resolution alone does
-not prove that stream control failed. This bound preserves the former packaged
-add-on default; direct `petlibro://` sources previously defaulted to no wait.
-The bound limits startup latency and is a preference window, not a guarantee
+not prove that stream control failed. The bound limits startup latency and
+is a preference window, not a guarantee
 that the camera has reached its requested resolution. If video arrived after
 the last retained IDR, the adapter discards that stale candidate and waits up
 to the normal five-second readiness timeout for a new SPS-bearing IDR. This can
@@ -238,12 +231,12 @@ per-session resolution guarantee. Rapidly overlapping or recently closed AV
 sessions caused an HD-requested encoder to move 1920x1080 -> 640x360 ->
 1920x1080 as camera-side session state decayed. `onlineNum` lagged explicit
 STOP by roughly 22 seconds in those runs. Treat it as firmware session-state
-evidence, not as an exact count of live add-on producers or viewers.
+evidence, not as an exact count of live go2rtc producers or viewers.
 
-Software FFmpeg decoded those in-band SPS/profile/level transitions both from
-the add-on RTSP endpoint and through a second go2rtc RTSP hop. That is useful
-negative evidence against a universal codec-epoch failure, but does not validate
-browser, QSV, or every persistent downstream decoder.
+Software FFmpeg decoded those in-band SPS/profile/level transitions through
+RTSP, including a second go2rtc RTSP hop. That is useful negative evidence
+against a universal codec-epoch failure, but does not validate browser, QSV,
+or every persistent downstream decoder.
 
 ## Adding configuration options
 

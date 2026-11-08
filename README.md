@@ -11,7 +11,7 @@ end-to-end. This project is not affiliated with Petlibro or TUTK.
 
 ## Requirements
 
-- A Petlibro camera that has completed initial provisioning in the Petlibro app
+- A Petlibro camera that has completed initial Wi-Fi provisioning in the Petlibro app
 - The camera's 20-character UID
 - Network access from the go2rtc host to the camera on UDP port `32761`
 - [Go 1.24 or newer](https://go.dev/doc/install) for a source build
@@ -113,10 +113,6 @@ go build -o /tmp/petlibro-go2rtc .
 go build -o /tmp/petlibro-resolve ./cmd/petlibro-resolve
 ```
 
-For the supported container containing both the camera service and PLAF203
-controller, use the
-[Petlibro Local Home Assistant add-on](https://github.com/tannerln7/Petlibro-Home-Assistant).
-
 ## Upstream and releases
 
 The maintained `petlibro` branch preserves the upstream go2rtc history and the
@@ -126,10 +122,9 @@ synchronizations are merged deliberately and documented in their pull
 requests. The Go module path remains `github.com/AlexxIT/go2rtc` to avoid a
 high-risk rewrite of go2rtc's internal imports.
 
-Fork releases use tags such as `v1.9.14-petlibro.1`. They are independent of
-Petlibro Home Assistant add-on releases. Consumers should pin a full commit or
-immutable tag and verify the published checksums rather than tracking the
-`petlibro` branch.
+Fork releases use tags such as `v1.9.14-petlibro.1`. Consumers should pin a
+full commit or immutable tag and verify the published checksums rather
+than tracking the `petlibro` branch.
 
 ## Troubleshooting and development
 
@@ -144,5 +139,6 @@ immutable tag and verify the published checksums rather than tracking the
 
 ## License
 
-This project retains go2rtc's [MIT license](LICENSE). See the upstream project
+This fork retains both MIT license notices: [upstream go2rtc](LICENSE) and
+[Petlibro Local contributors](LICENSE-petlibro-local). See the upstream project
 for the original implementation and broader go2rtc documentation.

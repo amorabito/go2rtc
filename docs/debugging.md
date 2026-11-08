@@ -71,12 +71,7 @@ changing its ordering.
 | `trace_packets=1` | off | Logs packet metadata and accepted/rejected extended-media candidates, not decrypted payload bytes; requires `verbose=1` |
 
 Enable traces one at a time unless full wire correlation is necessary.
-Packaged add-on users can set `camera_protocol_tracing: true` alongside
-`log_level: trace` to apply all four metadata trace flags to generated Petlibro
-sources for a bounded reproduction. The switch is independent:
-`log_level: trace` alone keeps the deep protocol flags disabled, and the switch
-alone does not lower the logging threshold. Plaintext dump files remain a
-separate option.
+Plaintext dump files remain a separate option.
 
 ### Camera controls
 
@@ -86,20 +81,13 @@ separate option.
 | `audio=true` | `false` | Requests AAC audio after video start |
 | `strict=1` | off | Drops damaged IDRs instead of emitting them; may freeze until a clean IDR. Dependent P-frames are always suppressed after a reference AU is dropped. |
 
-Packaged add-on users should use `camera_audio: true` rather than editing the
-generated URL. The renderer adds `audio=true` and a demand-driven
-`ffmpeg:<stream>#audio=opus` source. Native AAC and transcoded Opus are separate
-go2rtc tracks; H.264 is not transcoded. This enables feeder-microphone audio
-only and does not implement the speaker/backchannel direction.
+The transport supports inbound AAC only; speaker/backchannel audio is not
+implemented.
 
 The Petlibro stream-control body is capture-backed. The zero-valued data-delay
-control follows the public TUTK AVAPI sequence and was the packaged add-on's
-validated default; the repository does not claim that every firmware requires
-it. Both are fixed in the supported production profile rather than exposed as
-user policy. HD startup stabilization is camera-adapter behavior. Their former
-URL switches were reverse-engineering experiments and no longer affect runtime
-policy; see the
-[quarantine note](research/camera-runtime-quarantine.md).
+control follows the public TUTK AVAPI sequence. Both are fixed in the
+supported transport implementation rather than exposed as user options.
+HD startup stabilization is camera-adapter behavior.
 
 ### Transport ACK diagnostics
 
@@ -207,7 +195,7 @@ assembly policy.
 `petlibro: LOGIN_RESP timeout` means the camera did not acknowledge the login
 pair. Check, in order:
 
-1. The camera completed provisioning in the Petlibro app and remains online.
+1. The camera completed initial Wi-Fi provisioning in the Petlibro app and is reachable from the go2rtc host.
 2. The 20-character UID is exact.
 3. A fixed camera IP is current, or discovery traffic can reach the camera's
    broadcast domain.
@@ -336,7 +324,7 @@ not prove that the browser decoded or rendered a frame. Browser diagnostics or
 a synchronized client-side capture are required for that conclusion.
 
 FRAMEINFO `onlineNum` is firmware-provided AV session state. It is useful as a
-camera-side observation but is not an exact count of add-on producers or
+camera-side observation but is not an exact count of go2rtc producers or
 WebRTC viewers.
 
 See the [development guide](development.md#media-header-layouts) for the current
@@ -344,8 +332,7 @@ offset map and naming rules.
 
 ## Preparing a useful report
 
-Use the [Petlibro Home Assistant live qualification harness](https://github.com/tannerln7/Petlibro-Home-Assistant/blob/develop/addon/tests/live/README.md) for bounded
-consumer and decode checks. For a useful report, retain:
+For a useful report, retain:
 
 - sanitized Petlibro URL options
 - camera model and firmware
